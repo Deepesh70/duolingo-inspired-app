@@ -95,7 +95,7 @@ export default function OnboardingScreen() {
         <TouchableOpacity
           accessibilityRole="button"
           activeOpacity={0.88}
-          onPress={() => router.back()}
+          onPress={() => router.push("/sign-up")}
           className="h-16 w-full flex-row items-center justify-center rounded-[22px] bg-lingua-deep-purple px-6"
           style={styles.button}
         >
