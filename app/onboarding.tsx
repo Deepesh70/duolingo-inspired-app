@@ -1,5 +1,6 @@
+import { useAuth } from "@clerk/expo";
 import { Image } from "expo-image";
-import { router } from "expo-router";
+import { Redirect, router } from "expo-router";
 import {
   ScrollView,
   StyleSheet,
@@ -12,8 +13,12 @@ import { AppText } from "@/components/ui/app-text";
 import { images } from "@/constants/images";
 
 export default function OnboardingScreen() {
+  const { isLoaded, isSignedIn } = useAuth();
   const { height, width } = useWindowDimensions();
   const mascotSize = Math.min(width * 0.82, 420);
+
+  if (!isLoaded) return null;
+  if (isSignedIn) return <Redirect href="/" />;
 
   return (
     <ScrollView

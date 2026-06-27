@@ -1,6 +1,7 @@
+import { useAuth } from "@clerk/expo";
 import { Image } from "expo-image";
-import { Link } from "expo-router";
-import { ScrollView, StyleSheet, View } from "react-native";
+import { Redirect, router } from "expo-router";
+import { ScrollView, StyleSheet, TouchableOpacity, View } from "react-native";
 
 import { AppText } from "@/components/ui/app-text";
 import { images } from "@/constants/images";
@@ -91,6 +92,16 @@ function ColorGroup({ title, swatches }: { title: string; swatches: readonly Swa
 }
 
 export default function DesignSystemScreen() {
+  const { isLoaded, isSignedIn, signOut } = useAuth();
+
+  async function handleSignOut() {
+    await signOut();
+    router.replace("/onboarding");
+  }
+
+  if (!isLoaded) return null;
+  if (!isSignedIn) return <Redirect href="/onboarding" />;
+
   return (
     <ScrollView
       contentInsetAdjustmentBehavior="automatic"
@@ -99,12 +110,16 @@ export default function DesignSystemScreen() {
     >
       <View className="w-full max-w-[1480px] gap-5 md:flex-row md:items-start">
         <View className="flex-1 gap-5">
-          <Link
-            href="./onboarding"
-            className="rounded-2xl bg-lingua-deep-purple px-6 py-4 text-center font-poppins-semibold text-base text-white"
+          <TouchableOpacity
+            accessibilityRole="button"
+            activeOpacity={0.85}
+            className="items-center rounded-2xl bg-lingua-deep-purple px-6 py-4"
+            onPress={handleSignOut}
           >
-            Open onboarding
-          </Link>
+            <AppText variant="h4" className="text-white">
+              Sign Out
+            </AppText>
+          </TouchableOpacity>
 
           <View className="gap-7 rounded-2xl bg-background p-6 md:p-9" style={styles.card}>
             <SectionTitle>Brand</SectionTitle>

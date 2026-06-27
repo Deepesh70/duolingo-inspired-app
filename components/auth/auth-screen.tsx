@@ -1,3 +1,4 @@
+import { useSignIn, useSignUp, useSSO } from "@clerk/expo";
 import { FontAwesome5, Ionicons } from "@expo/vector-icons";
 import { Image } from "expo-image";
 import { router } from "expo-router";
@@ -23,6 +24,13 @@ type AuthScreenProps = {
   mode: AuthMode;
 };
 
+type SocialOption = {
+  name: "Google" | "Facebook" | "Apple";
+  icon: "google" | "facebook" | "apple";
+  color: string;
+  strategy: "oauth_google" | "oauth_facebook" | "oauth_apple";
+};
+
 const copy = {
   "sign-up": {
     title: "Create your account",
@@ -42,25 +50,39 @@ const copy = {
   },
 } as const;
 
-const socialOptions = [
-  { name: "Google", icon: "google", color: "#4285F4" },
-  { name: "Facebook", icon: "facebook", color: "#1877F2" },
-  { name: "Apple", icon: "apple", color: colors.neutral.textPrimary },
-] as const;
+const socialOptions: readonly SocialOption[] = [
+  { name: "Google", icon: "google", color: "#4285F4", strategy: "oauth_google" },
+  { name: "Facebook", icon: "facebook", color: "#1877F2", strategy: "oauth_facebook" },
+  { name: "Apple", icon: "apple", color: colors.neutral.textPrimary, strategy: "oauth_apple" },
+];
+
+function getErrorMessage(error: unknown) {
+  if (typeof error === "object" && error !== null) {
+    if ("longMessage" in error && typeof error.longMessage === "string") {
+      return error.longMessage;
+    }
+
+    if ("message" in error && typeof error.message === "string") {
+      return error.message;
+    }
+  }
+
+  return "Something went wrong. Please try again.";
+}
 
 export function AuthScreen({ mode }: AuthScreenProps) {
+  const { signIn } = useSignIn();
+  const { signUp } = useSignUp();
+  const { startSSOFlow } = useSSO();
   const { height } = useWindowDimensions();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [passwordVisible, setPasswordVisible] = useState(false);
   const [verificationVisible, setVerificationVisible] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [isVerifying, setIsVerifying] = useState(false);
   const screenCopy = copy[mode];
   const isSignUp = mode === "sign-up";
-
-  async function sendVerificationCode() {
-    await new Promise((resolve) => setTimeout(resolve, 300));
-  }
 
   async function handlePrimaryActionPress() {
     const trimmedEmail = email.trim();
@@ -79,8 +101,75 @@ export function AuthScreen({ mode }: AuthScreenProps) {
     setIsSubmitting(true);
 
     try {
-      await sendVerificationCode();
+      const { error } = isSignUp
+        ? await signUp.password({ emailAddress: trimmedEmail, password })
+        : await signIn.emailCode.sendCode({ emailAddress: trimmedEmail });
+
+      if (error) {
+        Alert.alert("Could not continue", getErrorMessage(error));
+        return;
+      }
+
+      if (isSignUp) {
+        const { error: verificationError } = await signUp.verifications.sendEmailCode();
+
+        if (verificationError) {
+          Alert.alert("Could not send code", getErrorMessage(verificationError));
+          return;
+        }
+      }
+
       setVerificationVisible(true);
+    } catch (error) {
+      Alert.alert("Could not continue", getErrorMessage(error));
+    } finally {
+      setIsSubmitting(false);
+    }
+  }
+
+  async function handleVerify(code: string) {
+    setIsVerifying(true);
+
+    try {
+      const { error } = isSignUp
+        ? await signUp.verifications.verifyEmailCode({ code })
+        : await signIn.emailCode.verifyCode({ code });
+
+      if (error) {
+        Alert.alert("Invalid code", getErrorMessage(error));
+        return;
+      }
+
+      if (isSignUp && signUp.status === "complete") {
+        await signUp.finalize();
+      } else if (!isSignUp && signIn.status === "complete") {
+        await signIn.finalize();
+      } else {
+        Alert.alert("Verification incomplete", "Please request a new code and try again.");
+        return;
+      }
+
+      setVerificationVisible(false);
+      router.replace("/");
+    } catch (error) {
+      Alert.alert("Could not verify code", getErrorMessage(error));
+    } finally {
+      setIsVerifying(false);
+    }
+  }
+
+  async function handleSocialAuth(option: SocialOption) {
+    setIsSubmitting(true);
+
+    try {
+      const { createdSessionId, setActive } = await startSSOFlow({ strategy: option.strategy });
+
+      if (createdSessionId && setActive) {
+        await setActive({ session: createdSessionId });
+        router.replace("/");
+      }
+    } catch (error) {
+      Alert.alert(`Could not continue with ${option.name}`, getErrorMessage(error));
     } finally {
       setIsSubmitting(false);
     }
@@ -197,12 +286,12 @@ export function AuthScreen({ mode }: AuthScreenProps) {
             {socialOptions.map((option) => (
               <TouchableOpacity
                 key={option.name}
-                accessibilityLabel={`Continue with ${option.name}, currently unavailable`}
+                accessibilityLabel={`Continue with ${option.name}`}
                 accessibilityRole="button"
-                accessibilityState={{ disabled: true }}
                 activeOpacity={0.72}
                 className="h-[76px] flex-row items-center rounded-[22px] border border-border bg-white px-12"
-                disabled
+                disabled={isSubmitting}
+                onPress={() => handleSocialAuth(option)}
               >
                 <FontAwesome5 color={option.color} name={option.icon} size={32} />
                 <AppText variant="bodyLarge" className="flex-1 text-center text-[16px] text-text-primary">
@@ -234,9 +323,12 @@ export function AuthScreen({ mode }: AuthScreenProps) {
 
       <VerificationModal
         email={email}
+        isVerifying={isVerifying}
         onClose={() => setVerificationVisible(false)}
+        onVerify={handleVerify}
         visible={verificationVisible}
       />
+      {isSignUp ? <View nativeID="clerk-captcha" /> : null}
     </>
   );
 }

@@ -1,5 +1,4 @@
 import { useEffect, useRef, useState } from "react";
-import { router } from "expo-router";
 import {
   Keyboard,
   KeyboardAvoidingView,
@@ -15,11 +14,19 @@ import { fontFamilies } from "@/theme";
 
 type VerificationModalProps = {
   email: string;
+  isVerifying: boolean;
   visible: boolean;
   onClose: () => void;
+  onVerify: (code: string) => Promise<void>;
 };
 
-export function VerificationModal({ email, visible, onClose }: VerificationModalProps) {
+export function VerificationModal({
+  email,
+  isVerifying,
+  visible,
+  onClose,
+  onVerify,
+}: VerificationModalProps) {
   const [code, setCode] = useState("");
   const inputRef = useRef<TextInput>(null);
 
@@ -35,16 +42,16 @@ export function VerificationModal({ email, visible, onClose }: VerificationModal
     const nextCode = value.replace(/\D/g, "").slice(0, 6);
     setCode(nextCode);
 
-    if (nextCode.length === 6) {
+    if (nextCode.length === 6 && !isVerifying) {
       Keyboard.dismiss();
-      setTimeout(() => router.replace("/"), 120);
+      void onVerify(nextCode);
     }
   }
 
   return (
     <Modal
       animationType="fade"
-      onRequestClose={onClose}
+      onRequestClose={isVerifying ? undefined : onClose}
       statusBarTranslucent
       transparent
       visible={visible}
@@ -53,7 +60,7 @@ export function VerificationModal({ email, visible, onClose }: VerificationModal
         behavior={process.env.EXPO_OS === "ios" ? "padding" : "height"}
         style={styles.keyboardView}
       >
-        <Pressable style={styles.backdrop} onPress={onClose} />
+        <Pressable style={styles.backdrop} onPress={isVerifying ? undefined : onClose} />
         <View className="mx-5 w-full max-w-[510px] gap-6 rounded-[30px] bg-white px-6 pb-8 pt-7" style={styles.card}>
           <View className="gap-2">
             <AppText variant="h2" className="text-center text-[25px] leading-[34px]">
@@ -71,6 +78,7 @@ export function VerificationModal({ email, visible, onClose }: VerificationModal
             accessibilityRole="button"
             accessibilityLabel="Enter verification code"
             className="relative flex-row justify-between gap-2"
+            disabled={isVerifying}
             onPress={() => inputRef.current?.focus()}
           >
             {Array.from({ length: 6 }, (_, index) => (
@@ -99,7 +107,7 @@ export function VerificationModal({ email, visible, onClose }: VerificationModal
           </Pressable>
 
           <AppText variant="bodySmall" className="text-center text-text-secondary">
-            Entering the last digit will continue automatically.
+            {isVerifying ? "Verifying your code…" : "Entering the last digit will continue automatically."}
           </AppText>
         </View>
       </KeyboardAvoidingView>
