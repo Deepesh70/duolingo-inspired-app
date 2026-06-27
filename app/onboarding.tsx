@@ -10,7 +10,6 @@ import {
 
 import { AppText } from "@/components/ui/app-text";
 import { images } from "@/constants/images";
-import { colors } from "@/theme";
 
 export default function OnboardingScreen() {
   const { height, width } = useWindowDimensions();
@@ -18,14 +17,18 @@ export default function OnboardingScreen() {
 
   return (
     <ScrollView
+      className="flex-1 bg-white"
       contentInsetAdjustmentBehavior="automatic"
       showsVerticalScrollIndicator={false}
-      style={styles.screen}
       contentContainerStyle={[styles.content, { minHeight: Math.max(height, 820) }]}
     >
       <View className="w-full max-w-[548px] flex-1 px-10 pb-10 pt-7">
         <View className="flex-row items-center justify-center">
-          <Image source={images.mascotLogo} contentFit="contain" style={styles.logo} />
+          <Image
+            source={images.mascotLogo}
+            contentFit="contain"
+            className="h-[86px] w-[100px]"
+          />
           <AppText
             variant="h1"
             className="-ml-5 text-[38px] leading-[46px] tracking-[-1.5px] text-text-primary"
@@ -64,21 +67,21 @@ export default function OnboardingScreen() {
               <AppText className="text-[20px] leading-[26px] text-text-primary">
                 Hello!
               </AppText>
-              <View style={[styles.speechTail, styles.helloTail]} />
+              <View className="absolute bottom-[-9px] right-4 h-5 w-5 rotate-45 bg-[#EDF7FF]" />
             </View>
 
             <View className="absolute right-1 top-0 z-10 rotate-[8deg] rounded-2xl bg-[#F5F3FF] px-5 py-3">
               <AppText className="text-[20px] leading-[26px] text-lingua-deep-purple">
                 ¡Hola!
               </AppText>
-              <View style={[styles.speechTail, styles.holaTail]} />
+              <View className="absolute bottom-[-9px] left-[18px] h-5 w-5 rotate-45 bg-[#F5F3FF]" />
             </View>
 
             <View className="absolute right-[-4px] top-[118px] z-10 rotate-[8deg] rounded-2xl bg-[#FFF3EC] px-5 py-3">
               <AppText className="text-[20px] leading-[27px] text-error">
                 你好!
               </AppText>
-              <View style={[styles.speechTail, styles.chineseTail]} />
+              <View className="absolute bottom-[-9px] left-[18px] h-5 w-5 rotate-45 bg-[#FFF3EC]" />
             </View>
 
             <Image
@@ -109,39 +112,12 @@ export default function OnboardingScreen() {
 }
 
 const styles = StyleSheet.create({
-  screen: {
-    flex: 1,
-    backgroundColor: colors.neutral.background,
-  },
   content: {
     flexGrow: 1,
     alignItems: "center",
   },
-  logo: {
-    width: 100,
-    height: 86,
-  },
   button: {
     borderCurve: "continuous",
     boxShadow: "0 5px 0 #4B2FE0",
-  },
-  speechTail: {
-    position: "absolute",
-    bottom: -9,
-    width: 20,
-    height: 20,
-    transform: [{ rotate: "45deg" }],
-  },
-  helloTail: {
-    right: 16,
-    backgroundColor: "#EDF7FF",
-  },
-  holaTail: {
-    left: 18,
-    backgroundColor: "#F5F3FF",
-  },
-  chineseTail: {
-    left: 18,
-    backgroundColor: "#FFF3EC",
   },
 });
