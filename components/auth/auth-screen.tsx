@@ -1,8 +1,9 @@
-import { useState } from "react";
 import { FontAwesome5, Ionicons } from "@expo/vector-icons";
 import { Image } from "expo-image";
 import { router } from "expo-router";
+import { useState } from "react";
 import {
+  Alert,
   ScrollView,
   StyleSheet,
   TextInput,
@@ -53,8 +54,37 @@ export function AuthScreen({ mode }: AuthScreenProps) {
   const [password, setPassword] = useState("");
   const [passwordVisible, setPasswordVisible] = useState(false);
   const [verificationVisible, setVerificationVisible] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const screenCopy = copy[mode];
   const isSignUp = mode === "sign-up";
+
+  async function sendVerificationCode() {
+    await new Promise((resolve) => setTimeout(resolve, 300));
+  }
+
+  async function handlePrimaryActionPress() {
+    const trimmedEmail = email.trim();
+    const trimmedPassword = password.trim();
+
+    if (!trimmedEmail) {
+      Alert.alert("Email required", "Enter your email address to continue.");
+      return;
+    }
+
+    if (isSignUp && !trimmedPassword) {
+      Alert.alert("Password required", "Enter a password to create your account.");
+      return;
+    }
+
+    setIsSubmitting(true);
+
+    try {
+      await sendVerificationCode();
+      setVerificationVisible(true);
+    } finally {
+      setIsSubmitting(false);
+    }
+  }
 
   return (
     <>
@@ -145,7 +175,8 @@ export function AuthScreen({ mode }: AuthScreenProps) {
               accessibilityRole="button"
               activeOpacity={0.88}
               className="h-[82px] items-center justify-center rounded-[20px] bg-lingua-deep-purple"
-              onPress={() => setVerificationVisible(true)}
+              disabled={isSubmitting}
+              onPress={handlePrimaryActionPress}
               style={styles.primaryButton}
             >
               <AppText variant="h3" className="text-[20px] text-white">
@@ -166,10 +197,12 @@ export function AuthScreen({ mode }: AuthScreenProps) {
             {socialOptions.map((option) => (
               <TouchableOpacity
                 key={option.name}
-                accessibilityLabel={`Continue with ${option.name}`}
+                accessibilityLabel={`Continue with ${option.name}, currently unavailable`}
                 accessibilityRole="button"
+                accessibilityState={{ disabled: true }}
                 activeOpacity={0.72}
                 className="h-[76px] flex-row items-center rounded-[22px] border border-border bg-white px-12"
+                disabled
               >
                 <FontAwesome5 color={option.color} name={option.icon} size={32} />
                 <AppText variant="bodyLarge" className="flex-1 text-center text-[16px] text-text-primary">
