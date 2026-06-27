@@ -1,6 +1,7 @@
 import { useSignIn, useSignUp, useSSO } from "@clerk/expo";
 import { FontAwesome5, Ionicons } from "@expo/vector-icons";
 import { Image } from "expo-image";
+import * as AuthSession from "expo-auth-session";
 import { router } from "expo-router";
 import { useState } from "react";
 import {
@@ -55,6 +56,8 @@ const socialOptions: readonly SocialOption[] = [
   { name: "Facebook", icon: "facebook", color: "#1877F2", strategy: "oauth_facebook" },
   { name: "Apple", icon: "apple", color: colors.neutral.textPrimary, strategy: "oauth_apple" },
 ];
+
+const ssoRedirectUrl = AuthSession.makeRedirectUri({ path: "sso-callback" });
 
 function getErrorMessage(error: unknown) {
   if (typeof error === "object" && error !== null) {
@@ -162,7 +165,10 @@ export function AuthScreen({ mode }: AuthScreenProps) {
     setIsSubmitting(true);
 
     try {
-      const { createdSessionId, setActive } = await startSSOFlow({ strategy: option.strategy });
+      const { createdSessionId, setActive } = await startSSOFlow({
+        strategy: option.strategy,
+        redirectUrl: ssoRedirectUrl,
+      });
 
       if (createdSessionId && setActive) {
         await setActive({ session: createdSessionId });
