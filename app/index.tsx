@@ -1,4 +1,5 @@
 import { Image } from "expo-image";
+import { Link } from "expo-router";
 import { ScrollView, StyleSheet, View } from "react-native";
 
 import { AppText } from "@/components/ui/app-text";
@@ -98,6 +99,13 @@ export default function DesignSystemScreen() {
     >
       <View className="w-full max-w-[1480px] gap-5 md:flex-row md:items-start">
         <View className="flex-1 gap-5">
+          <Link
+            href="./onboarding"
+            className="rounded-2xl bg-lingua-deep-purple px-6 py-4 text-center font-poppins-semibold text-base text-white"
+          >
+            Open onboarding
+          </Link>
+
           <View className="gap-7 rounded-2xl bg-background p-6 md:p-9" style={styles.card}>
             <SectionTitle>Brand</SectionTitle>
             <View className="flex-row items-end justify-center py-4">
