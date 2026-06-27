@@ -3,14 +3,14 @@ import { Text, type TextProps } from "react-native";
 import type { TypographyVariant } from "@/theme";
 
 const variantClasses: Record<TypographyVariant, string> = {
-  h1: "typography__h1",
-  h2: "typography__h2",
-  h3: "typography__h3",
-  h4: "typography__h4",
-  bodyLarge: "typography__body-large",
-  bodyMedium: "typography__body-medium",
-  bodySmall: "typography__body-small",
-  caption: "typography__caption",
+  h1: "h1",
+  h2: "h2",
+  h3: "h3",
+  h4: "h4",
+  bodyLarge: "body-lg",
+  bodyMedium: "body-md",
+  bodySmall: "body-sm",
+  caption: "caption",
 };
 
 type AppTextProps = TextProps & {

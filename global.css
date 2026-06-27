@@ -6,50 +6,50 @@
 
 @import "./theme/tokens.css";
 
-/* Typography block. Each element maps directly to the reference type scale. */
-.typography__h1 {
+/* Simple typography utilities matching the reference type scale. */
+.h1 {
   font-family: var(--font-poppins-bold);
   font-size: 32px;
   line-height: 38.4px;
 }
 
-.typography__h2 {
+.h2 {
   font-family: var(--font-poppins-semibold);
   font-size: 24px;
   line-height: 31.2px;
 }
 
-.typography__h3 {
+.h3 {
   font-family: var(--font-poppins-semibold);
   font-size: 20px;
   line-height: 26px;
 }
 
-.typography__h4 {
+.h4 {
   font-family: var(--font-poppins-medium);
   font-size: 16px;
   line-height: 22.4px;
 }
 
-.typography__body-large {
+.body-lg {
   font-family: var(--font-poppins);
   font-size: 16px;
   line-height: 25.6px;
 }
 
-.typography__body-medium {
+.body-md {
   font-family: var(--font-poppins);
   font-size: 14px;
   line-height: 22.4px;
 }
 
-.typography__body-small {
+.body-sm {
   font-family: var(--font-poppins);
   font-size: 13px;
   line-height: 20.8px;
 }
 
-.typography__caption {
+.caption {
   font-family: var(--font-poppins);
   font-size: 11px;
   line-height: 15.4px;
