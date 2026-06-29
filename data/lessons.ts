@@ -1,0 +1,202 @@
+import type { Lesson } from "@/types/learning";
+
+export const lessons: Lesson[] = [
+  {
+    id: "es-greetings",
+    unitId: "es-basics",
+    languageCode: "es",
+    order: 1,
+    kind: "practice",
+    title: "Hello!",
+    description: "Learn your first Spanish greetings.",
+    estimatedMinutes: 4,
+    xp: 10,
+    goals: [
+      "Recognize common greetings",
+      "Say hello and goodbye",
+      "Ask how someone is doing",
+    ],
+    vocabulary: [
+      { id: "es-hola", word: "hola", translation: "hello", pronunciation: "OH-lah" },
+      { id: "es-adios", word: "adiós", translation: "goodbye", pronunciation: "ah-DYOS" },
+      { id: "es-bien", word: "bien", translation: "well", pronunciation: "byen" },
+    ],
+    phrases: [
+      { id: "es-buenos-dias", text: "Buenos días", translation: "Good morning", pronunciation: "BWEH-nos DEE-ahs" },
+      { id: "es-como-estas", text: "¿Cómo estás?", translation: "How are you?", pronunciation: "KOH-moh eh-STAHS" },
+    ],
+    activities: [
+      {
+        id: "es-greetings-choice-1",
+        kind: "multiple-choice",
+        instruction: "Choose the correct meaning.",
+        prompt: "hola",
+        options: ["hello", "goodbye", "thank you"],
+        correctAnswer: "hello",
+      },
+      {
+        id: "es-greetings-translate-1",
+        kind: "translate",
+        instruction: "Translate into Spanish.",
+        prompt: "Goodbye",
+        acceptedAnswers: ["adiós", "adios"],
+        hint: "It begins with a.",
+      },
+      {
+        id: "es-greetings-listen-1",
+        kind: "listen-and-repeat",
+        instruction: "Listen, then repeat the greeting.",
+        phraseId: "es-buenos-dias",
+      },
+    ],
+  },
+  {
+    id: "es-introductions",
+    unitId: "es-basics",
+    languageCode: "es",
+    order: 2,
+    kind: "ai-teacher",
+    title: "Meet Your Teacher",
+    description: "Introduce yourself in a short guided conversation.",
+    estimatedMinutes: 6,
+    xp: 15,
+    goals: [
+      "Say your name",
+      "Ask another person their name",
+      "Use a polite closing phrase",
+    ],
+    vocabulary: [
+      { id: "es-nombre", word: "nombre", translation: "name", pronunciation: "NOM-breh" },
+      { id: "es-gracias", word: "gracias", translation: "thank you", pronunciation: "GRAH-syahs" },
+    ],
+    phrases: [
+      { id: "es-me-llamo", text: "Me llamo…", translation: "My name is…", pronunciation: "meh YAH-moh" },
+      { id: "es-como-te-llamas", text: "¿Cómo te llamas?", translation: "What is your name?", pronunciation: "KOH-moh teh YAH-mahs" },
+      { id: "es-mucho-gusto", text: "Mucho gusto", translation: "Nice to meet you", pronunciation: "MOO-choh GOOS-toh" },
+    ],
+    activities: [
+      {
+        id: "es-introductions-speak-1",
+        kind: "speak",
+        instruction: "Say the phrase and add your name.",
+        phraseId: "es-me-llamo",
+      },
+      {
+        id: "es-introductions-choice-1",
+        kind: "multiple-choice",
+        instruction: "Choose the friendliest response.",
+        prompt: "Me llamo Ana.",
+        options: ["Mucho gusto", "Adiós", "Buenos días"],
+        correctAnswer: "Mucho gusto",
+      },
+    ],
+    aiTeacherPrompt: {
+      teacherName: "Sofía",
+      role: "A warm, patient Spanish teacher for complete beginners.",
+      systemPrompt:
+        "Lead a short spoken introduction in beginner Spanish. Speak slowly, use one sentence at a time, and explain in English only when the learner is stuck. Ask for the learner's name, model the phrase 'Me llamo…', and gently correct pronunciation without interrupting the flow.",
+      firstMessage: "¡Hola! Me llamo Sofía. ¿Cómo te llamas?",
+      completionCriteria: [
+        "The learner says their name using 'Me llamo'.",
+        "The learner asks or repeats '¿Cómo te llamas?'.",
+        "The learner responds with 'Mucho gusto'.",
+      ],
+    },
+  },
+  {
+    id: "fr-greetings",
+    unitId: "fr-basics",
+    languageCode: "fr",
+    order: 1,
+    kind: "practice",
+    title: "Bonjour!",
+    description: "Learn polite French greetings and replies.",
+    estimatedMinutes: 4,
+    xp: 10,
+    goals: ["Say hello and goodbye", "Ask how someone is", "Give a simple reply"],
+    vocabulary: [
+      { id: "fr-bonjour", word: "bonjour", translation: "hello", pronunciation: "bohn-ZHOOR" },
+      { id: "fr-au-revoir", word: "au revoir", translation: "goodbye", pronunciation: "oh ruh-VWAHR" },
+      { id: "fr-bien", word: "bien", translation: "well", pronunciation: "byen" },
+    ],
+    phrases: [
+      { id: "fr-comment-ca-va", text: "Comment ça va ?", translation: "How are you?", pronunciation: "koh-MAHN sah VAH" },
+      { id: "fr-ca-va-bien", text: "Ça va bien", translation: "I am well", pronunciation: "sah VAH byen" },
+    ],
+    activities: [
+      {
+        id: "fr-greetings-choice-1",
+        kind: "multiple-choice",
+        instruction: "Choose the correct meaning.",
+        prompt: "bonjour",
+        options: ["hello", "please", "good night"],
+        correctAnswer: "hello",
+      },
+      {
+        id: "fr-greetings-listen-1",
+        kind: "listen-and-repeat",
+        instruction: "Listen, then repeat the question.",
+        phraseId: "fr-comment-ca-va",
+      },
+      {
+        id: "fr-greetings-translate-1",
+        kind: "translate",
+        instruction: "Translate into French.",
+        prompt: "I am well",
+        acceptedAnswers: ["Ça va bien", "Ca va bien"],
+      },
+    ],
+  },
+  {
+    id: "ja-greetings",
+    unitId: "ja-basics",
+    languageCode: "ja",
+    order: 1,
+    kind: "ai-teacher",
+    title: "こんにちは!",
+    description: "Practice friendly Japanese greetings aloud.",
+    estimatedMinutes: 5,
+    xp: 15,
+    goals: [
+      "Use a daytime greeting",
+      "Say good morning",
+      "Thank someone politely",
+    ],
+    vocabulary: [
+      { id: "ja-hai", word: "はい", translation: "yes", pronunciation: "hai" },
+      { id: "ja-arigatou", word: "ありがとう", translation: "thank you", pronunciation: "ah-ree-GAH-toh" },
+    ],
+    phrases: [
+      { id: "ja-konnichiwa", text: "こんにちは", translation: "Hello", pronunciation: "kohn-nee-chee-wah" },
+      { id: "ja-ohayou", text: "おはようございます", translation: "Good morning", pronunciation: "oh-hah-yoh goh-zai-mahs" },
+    ],
+    activities: [
+      {
+        id: "ja-greetings-choice-1",
+        kind: "multiple-choice",
+        instruction: "Choose the daytime greeting.",
+        prompt: "Which phrase means hello?",
+        options: ["こんにちは", "ありがとう", "はい"],
+        correctAnswer: "こんにちは",
+      },
+      {
+        id: "ja-greetings-speak-1",
+        kind: "speak",
+        instruction: "Say hello to your teacher.",
+        phraseId: "ja-konnichiwa",
+      },
+    ],
+    aiTeacherPrompt: {
+      teacherName: "Haru",
+      role: "An encouraging Japanese teacher for complete beginners.",
+      systemPrompt:
+        "Lead a brief spoken greeting practice. Speak slowly and clearly, use only the lesson phrases in Japanese, and give short English guidance when needed. Invite the learner to repeat each greeting and offer one gentle pronunciation tip at a time.",
+      firstMessage: "こんにちは！いっしょに言ってみましょう。こんにちは。",
+      completionCriteria: [
+        "The learner repeats 'こんにちは'.",
+        "The learner repeats 'おはようございます'.",
+        "The learner uses 'ありがとう' after feedback.",
+      ],
+    },
+  },
+];
