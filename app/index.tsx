@@ -113,6 +113,17 @@ export default function DesignSystemScreen() {
           <TouchableOpacity
             accessibilityRole="button"
             activeOpacity={0.85}
+            className="items-center rounded-2xl bg-lingua-purple px-6 py-4"
+            onPress={() => router.push("/language")}
+          >
+            <AppText variant="h4" className="text-white">
+              Choose a Language
+            </AppText>
+          </TouchableOpacity>
+
+          <TouchableOpacity
+            accessibilityRole="button"
+            activeOpacity={0.85}
             className="items-center rounded-2xl bg-lingua-deep-purple px-6 py-4"
             onPress={handleSignOut}
           >
@@ -120,6 +131,17 @@ export default function DesignSystemScreen() {
               Sign Out
             </AppText>
           </TouchableOpacity>
+
+          {/* <TouchableOpacity
+            accessibilityRole="button"
+            activeOpacity={0.85}
+            className="items-center rounded-2xl border border-border bg-background px-6 py-4"
+            onPress={() => router.push("/language")}
+          >
+            <AppText variant="h4" className="text-text-primary">
+              Choose Language
+            </AppText>
+          </TouchableOpacity> */}
 
           <View className="gap-7 rounded-2xl bg-background p-6 md:p-9" style={styles.card}>
             <SectionTitle>Brand</SectionTitle>
