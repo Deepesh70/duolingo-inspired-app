@@ -1,11 +1,13 @@
 import { useAuth } from "@clerk/expo";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 import { Image } from "expo-image";
-import { Redirect, router } from "expo-router";
+import { Redirect, router, type Href } from "expo-router";
 import { ScrollView, StyleSheet, TouchableOpacity, View } from "react-native";
 
 import { AppText } from "@/components/ui/app-text";
 import { images } from "@/constants/images";
 import { colors } from "@/theme";
+import { useLanguageStore } from "@/store/language-store";
 
 const primaryColors = [
   { name: "Lingua Purple", value: colors.brand.purple, className: "bg-lingua-purple" },
@@ -93,14 +95,24 @@ function ColorGroup({ title, swatches }: { title: string; swatches: readonly Swa
 
 export default function DesignSystemScreen() {
   const { isLoaded, isSignedIn, signOut } = useAuth();
+  const selectedLanguageId = useLanguageStore((state) => state.selectedLanguageId);
+  const hasHydrated = useLanguageStore((state) => state.hasHydrated);
 
   async function handleSignOut() {
     await signOut();
     router.replace("/onboarding");
   }
 
-  if (!isLoaded) return null;
+  async function handleClearStorage() {
+    useLanguageStore.setState({ selectedLanguageId: null });
+    await AsyncStorage.clear();
+    router.replace("/language");
+  }
+
+  if (!isLoaded || !hasHydrated) return null;
   if (!isSignedIn) return <Redirect href="/onboarding" />;
+  if (!selectedLanguageId) return <Redirect href="/language" />;
+  if (selectedLanguageId) return <Redirect href={"/home" as Href} />;
 
   return (
     <ScrollView
@@ -129,6 +141,17 @@ export default function DesignSystemScreen() {
           >
             <AppText variant="h4" className="text-white">
               Sign Out
+            </AppText>
+          </TouchableOpacity>
+
+          <TouchableOpacity
+            accessibilityRole="button"
+            activeOpacity={0.85}
+            className="items-center rounded-2xl border border-border bg-background px-6 py-4"
+            onPress={handleClearStorage}
+          >
+            <AppText variant="h4" className="text-text-primary">
+              Clear Async Storage
             </AppText>
           </TouchableOpacity>
 

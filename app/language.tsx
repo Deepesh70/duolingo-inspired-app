@@ -1,6 +1,7 @@
 import { Ionicons } from "@expo/vector-icons";
 import { Image } from "expo-image";
-import { router } from "expo-router";
+import { Redirect, router } from "expo-router";
+import { useAuth } from "@clerk/expo";
 import { useMemo, useState } from "react";
 import {
   ScrollView,
@@ -14,6 +15,7 @@ import { AppText } from "@/components/ui/app-text";
 import { images } from "@/constants/images";
 import { languages } from "@/data/languages";
 import { colors } from "@/theme";
+import { useLanguageStore } from "@/store/language-store";
 
 const learnerCounts: Record<string, string> = {
   es: "28.4M learners",
@@ -22,8 +24,13 @@ const learnerCounts: Record<string, string> = {
 };
 
 export default function LanguageScreen() {
+  const { isLoaded, isSignedIn } = useAuth();
+  const storedLanguageId = useLanguageStore((state) => state.selectedLanguageId);
+  const setSelectedLanguage = useLanguageStore((state) => state.setSelectedLanguage);
   const [query, setQuery] = useState("");
-  const [selectedLanguageId, setSelectedLanguageId] = useState(languages[0]?.id ?? "");
+  const [selectedLanguageId, setSelectedLanguageId] = useState(
+    storedLanguageId ?? languages[0]?.id ?? "",
+  );
 
   const filteredLanguages = useMemo(() => {
     const normalizedQuery = query.trim().toLocaleLowerCase();
@@ -36,6 +43,16 @@ export default function LanguageScreen() {
         language.nativeName.toLocaleLowerCase().includes(normalizedQuery),
     );
   }, [query]);
+
+  if (!isLoaded) return null;
+  if (!isSignedIn) return <Redirect href="/onboarding" />;
+
+  function handleConfirmLanguage() {
+    if (!selectedLanguageId) return;
+
+    setSelectedLanguage(selectedLanguageId);
+    router.replace("/");
+  }
 
   return (
     <ScrollView
@@ -132,7 +149,7 @@ export default function LanguageScreen() {
           activeOpacity={0.82}
           className="mt-6 h-[62px] items-center justify-center rounded-[22px] bg-lingua-deep-purple"
           disabled={!selectedLanguageId}
-          onPress={() => router.back()}
+          onPress={handleConfirmLanguage}
         >
           <AppText variant="h4" className="text-[17px] text-white">
             Confirm language
